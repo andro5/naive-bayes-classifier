@@ -10,7 +10,7 @@ data = [
     {"vrijeme": "oblacno", "temp": "visoka", "vlaznost": "niska", "vjetar": "slab", "odbojka": "da"},
 ]
 
-# racuna P(y)
+# racuna P(y), koliko da a koliko ne, pretvara br. u vjerojatnost
 def prior_probabilities(data):
     total = len(data)
     priors = {}
@@ -24,7 +24,7 @@ def prior_probabilities(data):
 
     return priors
 
-# racuna P(x | y)
+# racuna P(x | y), samo na temelju trenutno danih podataka npr P('vrijeme':'suncano' | 'odbojka': 'da')
 def conditional_probability(data, attribute, value, y):
     subset = [d for d in data if d["odbojka"] == y]
     total = len(subset)
@@ -32,16 +32,16 @@ def conditional_probability(data, attribute, value, y):
     values = set(d[attribute] for d in data)
     k = len(values)
 
-    count = sum(1 for d in subset if d[attribute] == value)
+    count = sum(1 for d in subset if d[attribute] == value) # broj poklapanja
 
     return (count + 1) / (total + k)
 
 # predikcija
 def predict(data, novi):
-    priors = prior_probabilities(data)
+    priors = prior_probabilities(data) # apriorne vrijednosti
     scores = {}
 
-    for y, prior in priors.items():
+    for y, prior in priors.items(): # racunanje scora za svaku klasu
         score = prior
 
         for attribute, value in novi.items():
@@ -55,8 +55,8 @@ def predict(data, novi):
 novi_dan = {
     "vrijeme": "suncano",
     "temp": "visoka",
-    "vlaznost": "visoka",
-    "vjetar": "jak"
+    "vlaznost": "normalna",
+    "vjetar": "slab"
 }
 
 print("Predikcija:", predict(data, novi_dan))
